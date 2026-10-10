@@ -10,6 +10,18 @@ open `bin\Release\net10.0-windows\PhosphorPet.exe` or build the project with
 dotnet build -c Release
 ```
 
+## install
+
+run `dist\PhosphorPet-Setup.exe` for a per-user installation with a start menu shortcut, an optional desktop shortcut, and an optional launch-at-startup setting. the installer includes the .net runtime, so it does not need to be installed separately. uninstall from Windows Installed apps or the start menu.
+
+to rebuild the self-contained x64 installer, install Inno Setup 6 and the .NET 10 SDK, then run:
+
+```powershell
+.\installer\build-installer.ps1
+```
+
+the installer source is in `installer\PhosphorPet.iss`.
+
 ## controls
 
 - drag the slime with the left mouse button
