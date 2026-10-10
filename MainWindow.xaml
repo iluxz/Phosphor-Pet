@@ -62,6 +62,8 @@
             <Separator />
             <MenuItem Header="add another slime"
                       Click="AddAnotherSlime_Click" />
+            <MenuItem Header="check for updates"
+                      Click="CheckForUpdates_Click" />
         </ContextMenu>
     </Window.ContextMenu>
     <Canvas x:Name="PetCanvas"

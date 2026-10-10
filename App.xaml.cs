@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Win32;
@@ -18,6 +19,7 @@ public partial class App : System.Windows.Application
     private Forms.NotifyIcon? _trayIcon;
     private Forms.ContextMenuStrip? _trayMenu;
     private Forms.ToolStripMenuItem? _launchOnStartupItem;
+    private bool _isCheckingForUpdates;
     private Icon? _trayImage;
 
     protected override void OnStartup(StartupEventArgs e)
@@ -31,11 +33,15 @@ public partial class App : System.Windows.Application
         };
         _launchOnStartupItem.Click += LaunchOnStartup_Click;
 
+        var checkForUpdatesItem = new Forms.ToolStripMenuItem("check for updates");
+        checkForUpdatesItem.Click += (_, _) => CheckForUpdates(showUpToDateMessage: true);
+
         var exitItem = new Forms.ToolStripMenuItem("exit phosphor pet");
         exitItem.Click += (_, _) => Shutdown();
 
         _trayMenu = new Forms.ContextMenuStrip();
         _trayMenu.Items.Add(_launchOnStartupItem);
+        _trayMenu.Items.Add(checkForUpdatesItem);
         _trayMenu.Items.Add(new Forms.ToolStripSeparator());
         _trayMenu.Items.Add(exitItem);
         _trayImage = CreateTrayImage();
@@ -49,6 +55,7 @@ public partial class App : System.Windows.Application
 
         MainWindow = new MainWindow();
         MainWindow.Show();
+        _ = CheckForUpdatesAsync(showUpToDateMessage: false);
     }
 
     protected override void OnExit(ExitEventArgs e)
@@ -86,6 +93,88 @@ public partial class App : System.Windows.Application
                 System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Error);
         }
+    }
+
+    public async void CheckForUpdates(bool showUpToDateMessage)
+    {
+        if (_isCheckingForUpdates)
+            return;
+
+        _isCheckingForUpdates = true;
+        try
+        {
+            var update = await UpdateService.FindAvailableUpdateAsync();
+            if (update is null)
+            {
+                if (showUpToDateMessage)
+                {
+                    WpfMessageBox.Show(
+                        "you are already running the latest version",
+                        "phosphor pet",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Information);
+                }
+
+                return;
+            }
+
+            var choice = WpfMessageBox.Show(
+                $"version {update.Tag} is available. download and install it now? phosphor pet will close while it updates.",
+                "phosphor pet update",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Information);
+            if (choice != System.Windows.MessageBoxResult.Yes)
+                return;
+
+            _trayIcon?.ShowBalloonTip(
+                5000,
+                "phosphor pet",
+                "downloading the update...",
+                Forms.ToolTipIcon.Info);
+
+            var installerPath = await UpdateService.DownloadInstallerAsync(update);
+            _ = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(installerPath)
+                {
+                    UseShellExecute = true
+                })
+                ?? throw new InvalidOperationException("Windows did not start the update installer.");
+            Shutdown();
+        }
+        catch (Exception exception) when (exception is HttpRequestException or
+                                          TaskCanceledException or
+                                          IOException or
+                                          UnauthorizedAccessException or
+                                          InvalidOperationException or
+                                          System.Text.Json.JsonException or
+                                          System.ComponentModel.Win32Exception)
+        {
+            if (showUpToDateMessage)
+            {
+                WpfMessageBox.Show(
+                    $"could not check for or install updates\n\n{exception.Message}",
+                    "phosphor pet",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+            else
+            {
+                _trayIcon?.ShowBalloonTip(
+                    5000,
+                    "phosphor pet",
+                    $"could not check for updates: {exception.Message}",
+                    Forms.ToolTipIcon.Warning);
+            }
+        }
+        finally
+        {
+            _isCheckingForUpdates = false;
+        }
+    }
+
+    private async Task CheckForUpdatesAsync(bool showUpToDateMessage)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(10));
+        CheckForUpdates(showUpToDateMessage);
     }
 
     private static bool IsLaunchOnStartupEnabled()

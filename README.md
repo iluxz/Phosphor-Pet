@@ -14,6 +14,8 @@ dotnet build -c Release
 
 run `dist\PhosphorPet-Setup.exe` for a per-user installation with a start menu shortcut, an optional desktop shortcut, and an optional launch-at-startup setting. the installer includes the .net runtime, so it does not need to be installed separately. uninstall from Windows Installed apps or the start menu.
 
+phosphor pet checks for updates when it starts and offers to download and install a newer release. you can also check manually from the pet's right-click menu or the system tray menu. pushing a stable `vX.Y.Z` tag builds and publishes the installer as a GitHub release.
+
 to rebuild the self-contained x64 installer, install Inno Setup 6 and the .NET 10 SDK, then run:
 
 ```powershell

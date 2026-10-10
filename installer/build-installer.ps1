@@ -1,8 +1,13 @@
 param(
-    [string]$Configuration = 'Release'
+    [string]$Configuration = 'Release',
+    [string]$Version = '1.1.0'
 )
 
 $ErrorActionPreference = 'Stop'
+if ($Version -notmatch '^\d+\.\d+\.\d+$') {
+    throw "Version '$Version' is not a valid release version."
+}
+
 $projectDirectory = Split-Path -Parent $PSScriptRoot
 $projectFile = Join-Path $projectDirectory 'PhosphorPet.csproj'
 $installerScript = Join-Path $PSScriptRoot 'PhosphorPet.iss'
@@ -29,6 +34,7 @@ New-Item -ItemType Directory -Force -Path $outputDirectory | Out-Null
     --configuration $Configuration `
     --runtime win-x64 `
     --self-contained true `
+    "-p:Version=$Version" `
     -p:PublishSingleFile=true `
     -p:IncludeNativeLibrariesForSelfExtract=true `
     -p:EnableCompressionInSingleFile=true `
@@ -37,7 +43,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE"
 }
 
-& $isccPath '/Qp' "/O$outputDirectory" $installerScript
+& $isccPath '/Qp' "/DAppVersion=$Version" "/O$outputDirectory" $installerScript
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $installerPath)) {
     throw "Inno Setup failed to create $installerPath (exit code $LASTEXITCODE)"
 }
