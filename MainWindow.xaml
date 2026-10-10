@@ -64,6 +64,9 @@
                       Click="AddAnotherSlime_Click" />
             <MenuItem Header="check for updates"
                       Click="CheckForUpdates_Click" />
+            <Separator />
+            <MenuItem Header="make this slime disappear"
+                      Click="MakeSlimeDisappear_Click" />
         </ContextMenu>
     </Window.ContextMenu>
     <Canvas x:Name="PetCanvas"

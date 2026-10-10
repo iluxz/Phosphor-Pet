@@ -1,10 +1,12 @@
 #define AppName "Phosphor Pet"
 #ifndef AppVersion
-  #define AppVersion "1.1.0"
+  #define AppVersion "1.1.1"
 #endif
 #define AppPublisher "iluxz"
 #define ProjectDirectory ".."
+#ifndef PublishDirectory
 #define PublishDirectory ProjectDirectory + "\publish\win-x64"
+#endif
 
 [Setup]
 AppId={{E4EF9513-2240-4ED5-AD5B-3C519E5ECDA4}

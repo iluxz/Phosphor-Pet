@@ -414,6 +414,8 @@ public partial class MainWindow : Window
     private void CheckForUpdates_Click(object sender, RoutedEventArgs e) =>
         ((App)System.Windows.Application.Current).CheckForUpdates(showUpToDateMessage: true);
 
+    private void MakeSlimeDisappear_Click(object sender, RoutedEventArgs e) => Close();
+
     private void Wander_Click(object sender, RoutedEventArgs e)
     {
         _isWandering = ((MenuItem)sender).IsChecked;

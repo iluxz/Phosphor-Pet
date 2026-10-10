@@ -30,6 +30,7 @@ the installer source is in `installer\PhosphorPet.iss`.
 - picking up the slime makes it shake and look mad until you let go
 - right click for the pet menu; click a sleeping slime to wake it
 - choose "add another slime" in the pet menu to spawn another one without relaunching the app
+- choose "make this slime disappear" in a pet's menu to close just that slime; the others keep running
 - use the menu to pause wandering, choose a hat, toggle largo, or let it sleep
 - use the desktop goose submenu to enable the mode, configure corner doodles and cursor grabs, and set the check and inactivity intervals
 - choose "go to sleep" to have the slime settle in the bottom-right corner and breathe while sleeping; use the menu or click it to wake it

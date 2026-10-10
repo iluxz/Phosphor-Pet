@@ -1,6 +1,7 @@
 param(
     [string]$Configuration = 'Release',
-    [string]$Version = '1.1.0'
+    [string]$Version = '1.1.1',
+    [string]$PublishDirectory = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -11,7 +12,10 @@ if ($Version -notmatch '^\d+\.\d+\.\d+$') {
 $projectDirectory = Split-Path -Parent $PSScriptRoot
 $projectFile = Join-Path $projectDirectory 'PhosphorPet.csproj'
 $installerScript = Join-Path $PSScriptRoot 'PhosphorPet.iss'
-$publishDirectory = Join-Path $projectDirectory 'publish\win-x64'
+if (-not $PublishDirectory) {
+    $PublishDirectory = Join-Path $projectDirectory 'publish\win-x64'
+}
+$publishDirectory = [System.IO.Path]::GetFullPath($PublishDirectory)
 $outputDirectory = Join-Path $projectDirectory 'dist'
 $installerPath = Join-Path $outputDirectory 'PhosphorPet-Setup.exe'
 $isccCommand = Get-Command 'ISCC.exe' -ErrorAction SilentlyContinue
@@ -43,7 +47,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish failed with exit code $LASTEXITCODE"
 }
 
-& $isccPath '/Qp' "/DAppVersion=$Version" "/O$outputDirectory" $installerScript
+& $isccPath '/Qp' "/DAppVersion=$Version" "/DPublishDirectory=$publishDirectory" "/O$outputDirectory" $installerScript
 if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $installerPath)) {
     throw "Inno Setup failed to create $installerPath (exit code $LASTEXITCODE)"
 }
