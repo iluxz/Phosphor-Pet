@@ -1,0 +1,189 @@
+<Window x:Class="PhosphorPet.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="phosphor slime"
+        Width="150"
+        Height="130"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        ResizeMode="NoResize"
+        ShowActivated="False"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        PreviewMouseRightButtonUp="PetWindow_PreviewMouseRightButtonUp">
+    <Window.ContextMenu>
+        <ContextMenu x:Name="PetMenu"
+                     Opened="PetMenu_Opened"
+                     Closed="PetMenu_Closed">
+            <MenuItem Header="wander" IsCheckable="True" IsChecked="True"
+                      Click="Wander_Click" />
+            <Separator />
+            <MenuItem Header="no hat" IsCheckable="True" IsChecked="True"
+                      Click="NoHat_Click" />
+            <MenuItem Header="little hat" IsCheckable="True"
+                      Click="LittleHat_Click" />
+            <MenuItem Header="gold hat" IsCheckable="True"
+                      Click="GoldHat_Click" />
+            <Separator />
+            <MenuItem Header="largo slime" IsCheckable="True"
+                      Click="Largo_Click" />
+            <Separator />
+            <MenuItem Header="desktop goose">
+                <MenuItem Header="desktop goose mode" IsCheckable="True"
+                          Click="GooseMode_Click" />
+                <MenuItem Header="corner doodles" IsCheckable="True" IsChecked="True"
+                          Click="GooseDoodles_Click" />
+                <MenuItem Header="cursor grabs" IsCheckable="True" IsChecked="True"
+                          Click="GooseCursorGrabs_Click" />
+                <Separator />
+                <MenuItem Header="check every">
+                    <MenuItem Header="12 seconds" IsCheckable="True" IsChecked="True"
+                              Click="GooseCheckInterval_Click" />
+                    <MenuItem Header="30 seconds" IsCheckable="True"
+                              Click="GooseCheckInterval_Click" />
+                    <MenuItem Header="60 seconds" IsCheckable="True"
+                              Click="GooseCheckInterval_Click" />
+                </MenuItem>
+                <MenuItem Header="require inactivity">
+                    <MenuItem Header="7 seconds" IsCheckable="True" IsChecked="True"
+                              Click="GooseIdleThreshold_Click" />
+                    <MenuItem Header="15 seconds" IsCheckable="True"
+                              Click="GooseIdleThreshold_Click" />
+                    <MenuItem Header="30 seconds" IsCheckable="True"
+                              Click="GooseIdleThreshold_Click" />
+                </MenuItem>
+            </MenuItem>
+            <Separator />
+            <MenuItem x:Name="SleepMenuItem" Header="go to sleep"
+                      Click="SleepMenuItem_Click" />
+        </ContextMenu>
+    </Window.ContextMenu>
+    <Canvas x:Name="PetCanvas"
+            Background="Transparent"
+            MouseLeftButtonDown="PetCanvas_MouseLeftButtonDown"
+            MouseLeftButtonUp="PetCanvas_MouseLeftButtonUp">
+        <Grid x:Name="Slime"
+              Width="104"
+              Height="88"
+              Canvas.Left="23"
+              Canvas.Top="18"
+              RenderTransformOrigin="0.5,0.55">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <TranslateTransform x:Name="BobTransform" />
+                    <ScaleTransform x:Name="SquishTransform" />
+                    <RotateTransform x:Name="ShakeTransform" />
+                </TransformGroup>
+            </Grid.RenderTransform>
+            <Ellipse x:Name="Glow"
+                     Width="98"
+                     Height="76"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Fill="#225A9CFF" />
+            <Ellipse x:Name="AngryGlow"
+                     Width="98"
+                     Height="76"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Fill="#44FF5268"
+                     Opacity="0"
+                     IsHitTestVisible="False" />
+            <Ellipse x:Name="Body"
+                     Width="86"
+                     Height="68"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Stroke="#9AD8FF"
+                     StrokeThickness="1.4">
+                <Ellipse.Fill>
+                    <RadialGradientBrush Center="0.34,0.28"
+                                         GradientOrigin="0.32,0.24"
+                                         RadiusX="0.78"
+                                         RadiusY="0.82">
+                        <GradientStop Color="#E8FFFFFF" Offset="0" />
+                        <GradientStop Color="#A8D9FFFF" Offset="0.34" />
+                        <GradientStop Color="#745A9CFF" Offset="0.72" />
+                        <GradientStop Color="#0A426FFF" Offset="1" />
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Ellipse Width="26"
+                     Height="12"
+                     Margin="24,16,0,0"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+                     Fill="#73FFFFFF"
+                     IsHitTestVisible="False">
+                <Ellipse.RenderTransform>
+                    <RotateTransform Angle="-24" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
+            <TextBlock x:Name="Face"
+                       Text=".."
+                       FontFamily="Consolas"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="#E8FFFFFF"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="5,2,0,0"
+                       IsHitTestVisible="False" />
+            <TextBlock x:Name="AngryMark"
+                       Text="!!"
+                       FontFamily="Consolas"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Foreground="#FFFF7180"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,12,17,0"
+                       Opacity="0"
+                       IsHitTestVisible="False" />
+            <TextBlock x:Name="SleepMark"
+                       Text="z z"
+                       FontFamily="Consolas"
+                       FontSize="12"
+                       FontWeight="Bold"
+                       Foreground="#FFE4F3FF"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Top"
+                       Margin="0,4,8,0"
+                       Opacity="0"
+                       Visibility="Collapsed"
+                       IsHitTestVisible="False">
+                <TextBlock.RenderTransform>
+                    <TranslateTransform x:Name="SleepMarkTransform" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
+            <Canvas x:Name="Hat"
+                    Width="42"
+                    Height="28"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,0,0,0"
+                    Visibility="Collapsed"
+                    IsHitTestVisible="False">
+                <Ellipse Canvas.Left="4"
+                         Canvas.Top="18"
+                         Width="34"
+                         Height="7"
+                         Fill="#DCEBFFFF"
+                         Stroke="#A7D9FFFF"
+                         StrokeThickness="1" />
+                <Polygon Points="10,20 16,3 26,3 32,20"
+                         Fill="#B9DBFFFF"
+                         Stroke="#E5F6FFFF"
+                         StrokeThickness="1" />
+                <Ellipse Canvas.Left="16"
+                         Canvas.Top="1"
+                         Width="10"
+                         Height="5"
+                         Fill="#EAF8FFFF" />
+            </Canvas>
+        </Grid>
+    </Canvas>
+</Window>
