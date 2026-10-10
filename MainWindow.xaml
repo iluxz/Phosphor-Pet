@@ -59,6 +59,9 @@
             <Separator />
             <MenuItem x:Name="SleepMenuItem" Header="go to sleep"
                       Click="SleepMenuItem_Click" />
+            <Separator />
+            <MenuItem Header="add another slime"
+                      Click="AddAnotherSlime_Click" />
         </ContextMenu>
     </Window.ContextMenu>
     <Canvas x:Name="PetCanvas"

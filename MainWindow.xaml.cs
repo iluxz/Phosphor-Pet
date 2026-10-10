@@ -398,6 +398,19 @@ public partial class MainWindow : Window
         e.Handled = true;
     }
 
+    private void AddAnotherSlime_Click(object sender, RoutedEventArgs e)
+    {
+        var petCount = System.Windows.Application.Current.Windows.OfType<MainWindow>().Count();
+        var offset = petCount * 32;
+        var workArea = SystemParameters.WorkArea;
+        var newPet = new MainWindow
+        {
+            Left = Math.Clamp(Left + offset, workArea.Left, workArea.Right - Width),
+            Top = Math.Clamp(Top + offset, workArea.Top, workArea.Bottom - Height)
+        };
+        newPet.Show();
+    }
+
     private void Wander_Click(object sender, RoutedEventArgs e)
     {
         _isWandering = ((MenuItem)sender).IsChecked;
