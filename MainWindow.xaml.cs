@@ -5,9 +5,11 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Effects;
 using System.Windows.Threading;
+using Button = System.Windows.Controls.Button;
 using Color = System.Windows.Media.Color;
 using MenuItem = System.Windows.Controls.MenuItem;
 using Point = System.Windows.Point;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace PhosphorPet;
 
@@ -400,15 +402,104 @@ public partial class MainWindow : Window
 
     private void AddAnotherSlime_Click(object sender, RoutedEventArgs e)
     {
-        var petCount = System.Windows.Application.Current.Windows.OfType<MainWindow>().Count();
-        var offset = petCount * 32;
+        var count = PromptForSlimeCount();
+        if (count is null)
+            return;
+
         var workArea = SystemParameters.WorkArea;
-        var newPet = new MainWindow
+        var existingPetCount = System.Windows.Application.Current.Windows.OfType<MainWindow>().Count();
+        for (var index = 0; index < count.Value; index++)
         {
-            Left = Math.Clamp(Left + offset, workArea.Left, workArea.Right - Width),
-            Top = Math.Clamp(Top + offset, workArea.Top, workArea.Bottom - Height)
+            var offset = (existingPetCount + index) * 32;
+            var newPet = new MainWindow
+            {
+                Left = Math.Clamp(Left + offset, workArea.Left, workArea.Right - Width),
+                Top = Math.Clamp(Top + offset, workArea.Top, workArea.Bottom - Height)
+            };
+            newPet.Show();
+        }
+    }
+
+    private int? PromptForSlimeCount()
+    {
+        const int maximumSlimesPerBatch = 50;
+        var countInput = new TextBox
+        {
+            Text = "1",
+            MinWidth = 180,
+            Margin = new Thickness(0, 8, 0, 12)
         };
-        newPet.Show();
+        var errorText = new TextBlock
+        {
+            Text = $"enter a whole number from 1 to {maximumSlimesPerBatch}",
+            Foreground = System.Windows.Media.Brushes.Firebrick,
+            Visibility = Visibility.Collapsed,
+            Margin = new Thickness(0, 0, 0, 8)
+        };
+        var addButton = new Button
+        {
+            Content = "add",
+            IsDefault = true,
+            MinWidth = 72
+        };
+        var dialog = new Window
+        {
+            Title = "add slimes",
+            Owner = this,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner,
+            ResizeMode = ResizeMode.NoResize,
+            SizeToContent = SizeToContent.WidthAndHeight,
+            ShowInTaskbar = false,
+            Content = new StackPanel
+            {
+                Margin = new Thickness(16),
+                Children =
+                {
+                    new TextBlock { Text = $"how many slimes? (maximum {maximumSlimesPerBatch})" },
+                    countInput,
+                    errorText,
+                    new StackPanel
+                    {
+                        Orientation = System.Windows.Controls.Orientation.Horizontal,
+                        HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+                        Children =
+                        {
+                            new Button
+                            {
+                                Content = "cancel",
+                                IsCancel = true,
+                                MinWidth = 72,
+                                Margin = new Thickness(0, 0, 8, 0)
+                            },
+                            addButton
+                        }
+                    }
+                }
+            }
+        };
+        int? selectedCount = null;
+        addButton.Click += (_, _) =>
+        {
+            if (!int.TryParse(countInput.Text, out var count) ||
+                count < 1 ||
+                count > maximumSlimesPerBatch)
+            {
+                errorText.Visibility = Visibility.Visible;
+                countInput.Focus();
+                countInput.SelectAll();
+                return;
+            }
+
+            selectedCount = count;
+            dialog.DialogResult = true;
+        };
+        dialog.Loaded += (_, _) =>
+        {
+            countInput.Focus();
+            countInput.SelectAll();
+        };
+
+        return dialog.ShowDialog() == true ? selectedCount : null;
     }
 
     private void CheckForUpdates_Click(object sender, RoutedEventArgs e) =>

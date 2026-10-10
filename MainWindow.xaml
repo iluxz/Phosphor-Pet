@@ -60,7 +60,7 @@
             <MenuItem x:Name="SleepMenuItem" Header="go to sleep"
                       Click="SleepMenuItem_Click" />
             <Separator />
-            <MenuItem Header="add another slime"
+            <MenuItem Header="add slimes..."
                       Click="AddAnotherSlime_Click" />
             <MenuItem Header="check for updates"
                       Click="CheckForUpdates_Click" />
