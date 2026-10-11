@@ -30,6 +30,7 @@ public partial class MainWindow : Window
     private Point _sleepTo;
     private DateTime _sleepStarted;
     private DateTime _bobStarted = DateTime.UtcNow;
+    private double _flapPhase;
     private bool _isDragging;
     private bool _isBeingCarried;
     private bool _isAngry;
@@ -136,6 +137,10 @@ public partial class MainWindow : Window
         var elapsed = (DateTime.UtcNow - _bobStarted).TotalSeconds;
         var breathing = Math.Sin(elapsed * Math.PI * 2 / 2.4);
         var isAngryAnimation = _isDragging || _isBeingCarried || _isWakingAngry;
+        _flapPhase += 0.032 * (isAngryAnimation ? 14 : 6);
+        var flap = 1 - 0.65 * Math.Abs(Math.Sin(_flapPhase));
+        WingLeftScale.ScaleY = flap;
+        WingRightScale.ScaleY = flap;
         BobTransform.Y = _isSleeping
             ? -10 * (1 + breathing) / 2
             : isAngryAnimation

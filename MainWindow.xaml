@@ -100,6 +100,22 @@
                      Fill="#44FF5268"
                      Opacity="0"
                      IsHitTestVisible="False" />
+            <Ellipse x:Name="WingLeft" Width="32" Height="22"
+                     HorizontalAlignment="Left" VerticalAlignment="Top"
+                     Margin="0,30,0,0" Fill="#B0D9FFFF" Opacity="0.85"
+                     RenderTransformOrigin="0.9,0.5" IsHitTestVisible="False">
+                <Ellipse.RenderTransform>
+                    <ScaleTransform x:Name="WingLeftScale" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
+            <Ellipse x:Name="WingRight" Width="32" Height="22"
+                     HorizontalAlignment="Right" VerticalAlignment="Top"
+                     Margin="0,30,0,0" Fill="#B0D9FFFF" Opacity="0.85"
+                     RenderTransformOrigin="0.1,0.5" IsHitTestVisible="False">
+                <Ellipse.RenderTransform>
+                    <ScaleTransform x:Name="WingRightScale" />
+                </Ellipse.RenderTransform>
+            </Ellipse>
             <Ellipse x:Name="Body"
                      Width="86"
                      Height="68"
